@@ -8,12 +8,15 @@ Gem::Specification.new do |gem|
   gem.version       = Gumby::Framework::VERSION
   gem.authors       = ["Jorge Coca"]
   gem.email         = ["jcoca@redpointtech.com"]
-  gem.description   = %q{Grumby Framework}
-  gem.summary       = %q{Grumby Framework}
-  gem.homepage      = ""
+  gem.description   = %q{Grumby Framework Gem for Ruby on Rails}
+  gem.summary       = %q{Grumby Framework - Front End}
+  gem.homepage      = "http://www.jorgecoca.com"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
+
+  gem.add_development_dependency "jquery-rails"
+  gem.add_development_dependency "modernizr-rails"
 end
