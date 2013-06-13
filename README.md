@@ -40,8 +40,9 @@ Add this line at the end of your application.css
 #### Javascript
 
 
-You will need to add first the global Gumby object in your application.js:
+You will need to add modernizr and global Gumby object in your application.js:
 
+	//= require modernizr
 	//= require gumby
 	
 After this line, you can add the Gumby JS plugins like this:
