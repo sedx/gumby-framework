@@ -1,33 +1,34 @@
 /**
 * Gumby Navbar
 */
-!function() {
+!function($) {
 
 	'use strict';
 
-	var $html = Gumby.$dom.find('html');
-
 	// define and init module on touch enabled devices only
-	// when we are at tablet size or smaller
-	if(!Modernizr.touch || $(window).width() > Gumby.breakpoint) {
-
-		// add Gumby no touch class
-		$html.addClass('gumby-no-touch');
+	if(!Gumby.gumbyTouch) {
 		return;
 	}
 
-	// add Gumby touch class
-	$html.addClass('gumby-touch');
-
 	function Navbar($el) {
+
+		Gumby.debug('Initializing Navbar', $el);
+
 		this.$el = $el;
 		this.$dropDowns = this.$el.find('li:has(.dropdown)');
 		var scope = this;
 
+		var persist = this.$el.attr('gumby-persist');
+		if(typeof persist === 'undefined' && persist !== 'false') {
+			this.$el.find('li:not(:has(.dropdown)) a').on(Gumby.click, function() {
+				scope.$el.find('ul').removeClass('active');
+			});
+		}
+
 		// when navbar items
 		this.$dropDowns
 		// are tapped hide/show dropdowns
-		.on('tap', this.toggleDropdown)
+		.on(Gumby.click, this.toggleDropdown)
 		// are swiped right open link
 		.on('swiperight', this.openLink);
 
@@ -36,23 +37,23 @@
 			// append an icon
 			this.$dropDowns.children('a').append('<i class="icon-popup"></i>').children('i')
 			// and bind to click event to open link
-			.on('tap', this.openLink);
+			.on(Gumby.click, this.openLink);
 		}
 
-		// on mousemove and touchstart toggle modernizr classes and disable/enable this module
-		// workaround for Pixel and other multi input devices
-		$(window).on('mousemove touchstart', function(e) {
-			e.stopImmediatePropagation();
-			if(e.type === 'mousemove') {
-				scope.$dropDowns.on('mouseover mouseout', scope.toggleDropdown);
-			}
-		});
+		// override with childlinks
+		this.$el.find('li:not(:has(.dropdown)) a[href]').on(Gumby.click, this.openLink);
 	}
 
 	Navbar.prototype.toggleDropdown = function(e) {
-		// prevent click from triggering here too
-		e.stopImmediatePropagation();
 		e.preventDefault();
+
+		if($(this).parents('.dropdown')) {
+			e.stopImmediatePropagation();
+		}
+
+		if($(e.target).is('i')) {
+			return;
+		}
 
 		var $this = $(this);
 
@@ -63,13 +64,12 @@
 		}
 	};
 
-	// handle opening list item link 
+	// handle opening list item link
 	Navbar.prototype.openLink = function(e) {
-		e.stopImmediatePropagation();
 		e.preventDefault();
 
 		var $this = $(this),
-			$el, href;
+			$el = $this, href;
 
 		// tapped icon
 		if($this.is('i')) {
@@ -91,7 +91,7 @@
 	};
 
 	// add initialisation
-	Gumby.addInitalisation('navbars', function() {
+	Gumby.addInitalisation('navbar', function() {
 		$('.navbar').each(function() {
 			var $this = $(this);
 			// this element has already been initialized
@@ -109,7 +109,7 @@
 		module: 'navbar',
 		events: [],
 		init: function() {
-			Gumby.initialize('navbars');
+			Gumby.initialize('navbar');
 		}
 	});
-}();
+}(jQuery);
